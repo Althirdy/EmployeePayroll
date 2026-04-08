@@ -1,4 +1,5 @@
 using EmployeePayroll.Data;
+using EmployeePayroll.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeePayroll
@@ -17,6 +18,9 @@ namespace EmployeePayroll
 
             builder.Services.AddDbContext<AppDbContext>(options => 
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
 
             var app = builder.Build();
 
