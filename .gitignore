@@ -1,0 +1,6 @@
+
+#.NET
+api/bin
+api/obj/
+api/.vs/
+api/*.user
