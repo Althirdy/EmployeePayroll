@@ -13,12 +13,10 @@ namespace EmployeePayroll.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IEmployeeService _employeeService;
 
         public EmployeesController(AppDbContext appDbContext, IEmployeeService employeeService)
         {
-            _context = appDbContext;
             _employeeService = employeeService;
         }
 
