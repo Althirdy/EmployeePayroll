@@ -10,5 +10,6 @@ namespace EmployeePayroll.Services
         Task<EmployeeResponse> UpdateEmployeeAsync(int id,EmployeeUpdateRequest request);
         Task<bool> DeleteEmployeeAsync(int id);
 
+        Task<EmployeeTakeHomePayResponse> ComputeTakeHomePayAsync(int id, DateTime startDate, DateTime endDate);
     }
 }

@@ -45,7 +45,7 @@ namespace EmployeePayroll.Controllers
         public async Task<IActionResult> CreateEmployee([FromBody] EmployeeRequest employeeRequest)
         {
             if (employeeRequest == null) return BadRequest();
-      
+
             var createdEmployee = await _employeeService.CreateEmployeeAsync(employeeRequest);
             return CreatedAtAction(nameof(GetEmployeeByID), new { id = createdEmployee.Id }, createdEmployee);
         }
@@ -78,6 +78,20 @@ namespace EmployeePayroll.Controllers
             catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/compute")]
+        public async Task<IActionResult> ComputeTakeHomePay([FromBody] ComputeRequest computeRequest, [FromRoute] int id)
+        {
+            try
+            {
+                var totalPay = await _employeeService.ComputeTakeHomePayAsync(id, computeRequest.StartDate, computeRequest.EndDate);
+                return Ok(totalPay);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
