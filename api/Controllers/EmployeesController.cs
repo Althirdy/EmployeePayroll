@@ -69,10 +69,10 @@ namespace EmployeePayroll.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee([FromRoute] int id)
         {
-            bool isDeleted = await _employeeService.DeleteEmployeeAsync(id);
 
             try
             {
+                bool isDeleted = await _employeeService.DeleteEmployeeAsync(id);
                 return NoContent();
             }
             catch (ArgumentException ex)
