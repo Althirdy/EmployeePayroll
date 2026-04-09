@@ -8,11 +8,11 @@ A simple payroll system built using ASP.NET Core Web API that allows managing em
 
 ### Create Employee
 
-![Create Employee Screen](./docs/CreateEmpoloyee.png)
+![Create Employee Screen](./_docs/CreateEmployeee.png)
 
 ### Employee List and Take-home Pay
 
-![Employee List and Take-home Pay Screen](./docs/EmployeeList.png)
+![Employee List and Take-home Pay Screen](./_docs/EmployeeList.png)
 
 ---
 
