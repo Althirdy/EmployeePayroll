@@ -46,8 +46,15 @@ namespace EmployeePayroll.Controllers
         {
             if (employeeRequest == null) return BadRequest();
 
-            var createdEmployee = await _employeeService.CreateEmployeeAsync(employeeRequest);
-            return CreatedAtAction(nameof(GetEmployeeByID), new { id = createdEmployee.Id }, createdEmployee);
+            try
+            {
+                var createdEmployee = await _employeeService.CreateEmployeeAsync(employeeRequest);
+                return CreatedAtAction(nameof(GetEmployeeByID), new { id = createdEmployee.Id }, createdEmployee);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("{id}")]
@@ -61,8 +68,13 @@ namespace EmployeePayroll.Controllers
                 return Ok(updatedEmployee);
 
             }
-            catch (ArgumentException ex) { 
+            catch (ArgumentException ex) when (ex.Message == "Employee not found")
+            {
                 return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

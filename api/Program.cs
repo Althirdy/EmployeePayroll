@@ -9,12 +9,37 @@ namespace EmployeePayroll
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            const string DevUiCorsPolicy = "DevUiCorsPolicy";
 
             // Add services to the container.
 
             builder.Services.AddControllers();
 
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(DevUiCorsPolicy, policy =>
+                {
+                    policy
+                        .SetIsOriginAllowed(origin =>
+                        {
+                            if (string.Equals(origin, "null", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return true;
+                            }
+
+                            if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                            {
+                                return false;
+                            }
+
+                            return uri.IsLoopback;
+                        })
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddDbContext<AppDbContext>(options => 
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -30,6 +55,7 @@ namespace EmployeePayroll
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors(DevUiCorsPolicy);
             }
 
             app.UseHttpsRedirection();

@@ -11,8 +11,13 @@ namespace EmployeePayroll.Mappers
             return new EmployeeResponse
             {
                 Id = employee.Id,
-                EmployeeName = $"{employee.LastName}, {employee.FirstName} {employee.MiddleName}".Trim(),
+                EmployeeNumber = employee.EmployeeNumber,
+                LastName = employee.LastName,
+                FirstName = employee.FirstName,
+                MiddleName = employee.MiddleName,
+                EmployeeName = $"{employee.LastName}, {employee.FirstName} {employee.MiddleName}".Trim().ToUpper(),
                 DateOfBirth = employee.DateOfBirth.ToString("MMMM d, yyyy"),
+                DateOfBirthValue = employee.DateOfBirth.ToString("yyyy-MM-dd"),
                 DailyRate = employee.DailyRate,
                 WorkingDays = employee.WorkingDays
             };

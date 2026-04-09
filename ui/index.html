@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employees</title>
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <main class="container">
+        <header class="page-header">
+            <div>
+                <h1>Employees</h1>
+                <p>Create a new employee and view all employees from the API.</p>
+            </div>
+            <button id="refreshButton" class="action-button" type="button">Refresh</button>
+        </header>
+
+        <div id="statusMessage" class="status-banner" role="status" aria-live="polite">
+            Loading employees...
+        </div>
+
+        <section class="form-section">
+            <div class="form-header">
+                <div>
+                    <h2 id="formTitle">Create Employee</h2>
+                    <p id="employeeNumberDisplay" class="employee-number-display"></p>
+                </div>
+            </div>
+            <form id="employeeForm" class="employee-form" novalidate>
+                <div class="form-grid">
+                    <label class="form-field">
+                        <span>Last Name</span>
+                        <input id="lastName" name="lastName" type="text" maxlength="100" required>
+                    </label>
+
+                    <label class="form-field">
+                        <span>First Name</span>
+                        <input id="firstName" name="firstName" type="text" maxlength="100" required>
+                    </label>
+
+                    <label class="form-field">
+                        <span>Middle Name</span>
+                        <input id="middleName" name="middleName" type="text" maxlength="100">
+                    </label>
+
+                    <label class="form-field">
+                        <span>Date of Birth</span>
+                        <input id="dateOfBirth" name="dateOfBirth" type="date" required>
+                    </label>
+
+                    <label class="form-field">
+                        <span>Daily Rate</span>
+                        <input id="dailyRate" name="dailyRate" type="number" min="0.01" step="0.01" required>
+                    </label>
+
+                    <label class="form-field">
+                        <span>Working Days</span>
+                        <select id="workingDays" name="workingDays" required>
+                            <option value="">Select working days</option>
+                            <option value="MWF">MWF</option>
+                            <option value="TTHS">TTHS</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
+
+                <div class="form-actions">
+                    <button id="submitButton" class="action-button" type="submit">Create Employee</button>
+                    <button id="resetButton" class="secondary-button" type="reset">Clear</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="tableRegion" class="table-region"></div>
+
+        <section id="computeSection" class="form-section">
+            <div class="form-header">
+                <div>
+                    <h2>Compute Take-Home Pay</h2>
+                    <p id="computeEmployeeDisplay" class="employee-number-display">Select an employee from the table to compute take-home pay.</p>
+                </div>
+            </div>
+
+            <form id="computeForm" class="employee-form" novalidate>
+                <div class="form-grid">
+                    <label class="form-field">
+                        <span>Start Date</span>
+                        <input id="computeStartDate" name="computeStartDate" type="date" required>
+                    </label>
+
+                    <label class="form-field">
+                        <span>End Date</span>
+                        <input id="computeEndDate" name="computeEndDate" type="date" required>
+                    </label>
+                </div>
+
+                <div id="computeMessage" class="form-message" role="alert" aria-live="polite"></div>
+
+                <div class="form-actions">
+                    <button id="computeSubmitButton" class="action-button" type="submit">Compute Take-Home Pay</button>
+                    <button id="computeResetButton" class="secondary-button" type="reset">Clear</button>
+                </div>
+            </form>
+
+            <div id="computeResult" class="compute-result"></div>
+        </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
