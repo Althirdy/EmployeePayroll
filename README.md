@@ -85,6 +85,13 @@ and business logic.
 }
 ```
 
+```json
+{
+  "dailyRate": 2500,
+  "workingDays": "TTHS"
+}
+```
+
 ### Compute Take-home Pay
 
 ```json

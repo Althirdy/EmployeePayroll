@@ -101,6 +101,10 @@ namespace EmployeePayroll.Controllers
                 var totalPay = await _employeeService.ComputeTakeHomePayAsync(id, computeRequest.StartDate, computeRequest.EndDate);
                 return Ok(totalPay);
             }
+            catch (ArgumentException ex) when (ex.Message == "Employee not found")
+            {
+                return NotFound(ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);

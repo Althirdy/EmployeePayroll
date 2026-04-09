@@ -69,21 +69,12 @@ namespace EmployeePayroll.Services
         {
             var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id) ?? throw new ArgumentException("Employee not found");
 
-            if (request.DateOfBirth > DateTime.Now)
-            {
-                throw new ArgumentException("Date of birth cannot be in the future");
-            }
-
             request.WorkingDays = request.WorkingDays.Trim().ToUpperInvariant();
             if (!request.WorkingDays.Equals("MWF", StringComparison.OrdinalIgnoreCase) && !request.WorkingDays.Equals("TTHS", StringComparison.OrdinalIgnoreCase))
             {
                 throw new ArgumentException("Invalid working days");
             }
 
-            employee.LastName = request.LastName;
-            employee.FirstName = request.FirstName;
-            employee.MiddleName = request.MiddleName;
-            employee.DateOfBirth = request.DateOfBirth;
             employee.DailyRate = request.DailyRate;
             employee.WorkingDays = request.WorkingDays;
 

@@ -1,5 +1,6 @@
 (function ($) {
     const apiBaseUrl = "http://localhost:5237/api";
+    const enableDebugLogs = false;
     let employeesCache = [];
     let editingEmployeeId = null;
     let computingEmployeeId = null;
@@ -13,6 +14,7 @@
     const $resetButton = $("#resetButton");
     const $formTitle = $("#formTitle");
     const $employeeNumberDisplay = $("#employeeNumberDisplay");
+    const $editModeHint = $("#editModeHint");
     const $computeSection = $("#computeSection");
     const $computeForm = $("#computeForm");
     const $computeEmployeeDisplay = $("#computeEmployeeDisplay");
@@ -20,6 +22,19 @@
     const $computeSubmitButton = $("#computeSubmitButton");
     const $computeResetButton = $("#computeResetButton");
     const $computeResult = $("#computeResult");
+
+    function debugLog(message, payload) {
+        if (!enableDebugLogs || typeof console === "undefined") {
+            return;
+        }
+
+        if (typeof payload === "undefined") {
+            console.log("[employee-ui]", message);
+            return;
+        }
+
+        console.log("[employee-ui]", message, payload);
+    }
 
     function setFormMessage(message, stateClass) {
         $formMessage
@@ -69,6 +84,9 @@
         $submitButton.text("Update Employee");
         $resetButton.text("Cancel");
         $employeeNumberDisplay.text("Employee Number: " + (employee.employeeNumber || ""));
+        $editModeHint.text("Only Daily Rate and Working Days can be edited in update mode.");
+        setIdentityFieldsEditable(false);
+        debugLog("Entered edit mode", { employeeId: editingEmployeeId });
     }
 
     function setCreateMode() {
@@ -77,6 +95,16 @@
         $submitButton.text("Create Employee");
         $resetButton.text("Clear");
         $employeeNumberDisplay.text("");
+        $editModeHint.text("");
+        setIdentityFieldsEditable(true);
+        debugLog("Entered create mode");
+    }
+
+    function setIdentityFieldsEditable(isEditable) {
+        $("#lastName").prop("readonly", !isEditable);
+        $("#firstName").prop("readonly", !isEditable);
+        $("#middleName").prop("readonly", !isEditable);
+        $("#dateOfBirth").prop("readonly", !isEditable);
     }
 
     function escapeHtml(value) {
@@ -200,6 +228,13 @@
         };
     }
 
+    function getUpdatePayload() {
+        return {
+            dailyRate: Number($("#dailyRate").val()),
+            workingDays: ($("#workingDays").val() || "").trim()
+        };
+    }
+
     function validateForm(payload) {
         if (!payload.lastName) {
             return "Last name is required.";
@@ -213,6 +248,18 @@
             return "Date of birth is required.";
         }
 
+        if (!Number.isFinite(payload.dailyRate) || payload.dailyRate <= 0) {
+            return "Daily rate must be greater than 0.";
+        }
+
+        if (!payload.workingDays) {
+            return "Working days is required.";
+        }
+
+        return "";
+    }
+
+    function validateUpdatePayload(payload) {
         if (!Number.isFinite(payload.dailyRate) || payload.dailyRate <= 0) {
             return "Daily rate must be greater than 0.";
         }
@@ -260,10 +307,24 @@
         $("#workingDays").val(employee.workingDays || "");
     }
 
+    function clearEmployeeFormFields() {
+        $("#lastName").val("");
+        $("#firstName").val("");
+        $("#middleName").val("");
+        $("#dateOfBirth").val("");
+        $("#dailyRate").val("");
+        $("#workingDays").val("");
+    }
+
     function resetFormState() {
-        $employeeForm[0].reset();
+        clearEmployeeFormFields();
         clearFormMessage();
         setCreateMode();
+    }
+
+    function handleEmployeeFormReset() {
+        debugLog("Clear/Cancel clicked", { isEditing: editingEmployeeId !== null });
+        resetFormState();
     }
 
     function clearComputeResult() {
@@ -283,6 +344,10 @@
     function clearComputeFormInputs() {
         $("#computeStartDate").val("");
         $("#computeEndDate").val("");
+    }
+
+    function handleComputeFormReset() {
+        resetComputeState();
     }
 
     function renderComputeResult(result) {
@@ -317,8 +382,9 @@
         event.preventDefault();
         clearFormMessage();
 
-        const payload = getFormPayload();
-        const validationMessage = validateForm(payload);
+        const isEditing = editingEmployeeId !== null;
+        const payload = isEditing ? getUpdatePayload() : getFormPayload();
+        const validationMessage = isEditing ? validateUpdatePayload(payload) : validateForm(payload);
 
         if (validationMessage) {
             setFormMessage(validationMessage, "is-error");
@@ -328,7 +394,6 @@
         $submitButton.prop("disabled", true);
         $resetButton.prop("disabled", true);
 
-        const isEditing = editingEmployeeId !== null;
         $.ajax({
             url: isEditing ? apiBaseUrl + "/employees/" + editingEmployeeId : apiBaseUrl + "/employees",
             method: isEditing ? "PUT" : "POST",
@@ -337,6 +402,7 @@
         })
             .done(function () {
                 const successMessage = isEditing ? "Employee updated successfully." : "Employee created successfully.";
+                debugLog("Employee submit succeeded", { isEditing: isEditing, employeeId: editingEmployeeId });
                 resetFormState();
                 setFormMessage(successMessage, "is-success");
                 setStatus(successMessage + " Reloading list...", "is-success");
@@ -468,17 +534,9 @@
         resetComputeState();
         $refreshButton.on("click", loadEmployees);
         $employeeForm.on("submit", submitEmployeeForm);
-        $employeeForm.on("reset", function () {
-            window.setTimeout(function () {
-                resetFormState();
-            }, 0);
-        });
+        $resetButton.on("click", handleEmployeeFormReset);
         $computeForm.on("submit", submitComputeForm);
-        $computeForm.on("reset", function () {
-            window.setTimeout(function () {
-                resetComputeState();
-            }, 0);
-        });
+        $computeResetButton.on("click", handleComputeFormReset);
         $tableRegion.on("click", ".js-edit-employee", function () {
             startEditingEmployee($(this).data("id"));
         });
