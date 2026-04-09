@@ -32,7 +32,8 @@ A simple payroll system built using ASP.NET Core Web API that allows managing em
 
 - HTML
 - jQuery (AJAX)
-- Bootstrap
+- Css
+- Javascript
 
 ### Tools
 
